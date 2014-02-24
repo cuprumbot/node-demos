@@ -1,62 +1,53 @@
-var johnnyFive = require("johnny-five"),
-    board = new johnnyFive.Board();
+johnnyFive = require("johnny-five");
+board = new johnnyFive.Board();
 
-//var webSocket = require('ws'),
-//    ws = new webSocket('ws://127.0.0.1:6437');
+//webSocket = require('ws');
+//ws = new webSocket('ws://127.0.0.1:6437');
+
+keypress = require('keypress');
 
 var r, l;
-var ledClose, ledFar;
+//var ledClose, ledFar;
 //var ping;
 
-var acceptOrders = true;
-var execTime = 1000;
-
-// ----- KEYPRESS INIT -----
-var keypress = require('keypress');
-
-// make `process.stdin` begin emitting "keypress" events
-
-// ----- KEYPRESS FIN -----
+//auto stop
+acceptOrders = true;
+execTime = 1000;
 
 board.on("ready", function() {
   //create instances of servo
   l = new johnnyFive.Servo({pin:11,type:"continuous"});
   r = new johnnyFive.Servo({pin:10,type:"continuous"});
 
-  ledClose = new johnnyFive.Led(2);
-  ledFar = new johnnyFive.Led(12);
-
-  ping = new johnnyFive.Ping(13);
+  //ledClose = new johnnyFive.Led(2);
+  //ledFar = new johnnyFive.Led(12);
+  //ping = new johnnyFive.Ping(13);
 
   //inject in repl instance
-  board.repl.inject( { r:r, l:l } );
-
-  stop();
+  //board.repl.inject( { r:r, l:l } );
 
   keypress(process.stdin);
-
-// listen for the "keypress" event
-process.stdin.on('keypress', function (ch, key) {
-  console.log('got "keypress"', key);
-  if (key && key.ctrl && key.name == 'c') {
-    process.stdin.pause();
-  }else if (key.name == 'up') {
-    forward();
-  }else if (key.name == 'down') {
-    backward();
-  }else if (key.name == 'right') {
-    right();
-  }else if (key.name == 'left') {
-    left();
-  }else if (key.name == 's'){
-    stop();
-  }
-});
-
-process.stdin.setRawMode(true);
-process.stdin.resume();
+  process.stdin.setRawMode(true);
+  process.stdin.resume();
+  stop();
 
   // ----- LISTENERS -----
+  process.stdin.on('keypress', function (ch, key) {
+    console.log('got "keypress"', key);
+
+    if (key.name == 'up') {
+      forward();
+    }else if (key.name == 'down') {
+      backward();
+    }else if (key.name == 'right') {
+      right();
+    }else if (key.name == 'left') {
+      left();
+    }else if (key.name == 's'){
+      stop();
+    }
+  });
+
   /*
   ping.on("change", function(err, value) {
     console.log(this.cm);
@@ -71,9 +62,9 @@ process.stdin.resume();
     else
       ledFar.off();
   });
-*/
+  */
 
-/*
+  /*
   ws.on("message", function(data, flags) {
     frame = JSON.parse(data);
 
@@ -96,10 +87,10 @@ process.stdin.resume();
         stop();
     }
   })
-*/
+  */
 });
 
-// ----- BOEBOT -----
+// ----- auto stop -----
 exec = function (foo,time) {
   if (acceptOrders) {
     acceptOrders = false;
