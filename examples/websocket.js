@@ -1,5 +1,6 @@
 var webSocket = require('ws'),
-    ws = new webSocket('ws://127.0.0.1:6437');
+    //ws = new webSocket('ws://127.0.0.1:6437');
+    ws = new webSocket('ws://127.0.0.1:9002');
 
 ws.on('message', function(data, flags) {
     frame = JSON.parse(data);
